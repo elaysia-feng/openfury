@@ -2,7 +2,7 @@
 
 The recruiter side is the real worker, unchanged. The candidate is a second voice agent with a
 persona, joining the room as participant "candidate" the way a phone leg would. The worker
-records the call as usual, so this is how the sample audio in samples/ was made.
+records the call as usual, so this is how to record a sample for a new use case.
 
     python -m openfury.worker dev                       # terminal 1 (AGENT_NAME=openfury-demo)
     python examples/demo_call.py engineering            # terminal 2

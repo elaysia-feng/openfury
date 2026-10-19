@@ -40,8 +40,8 @@ from livekit.plugins import noise_cancellation, silero
 from livekit.plugins.google.beta import GeminiTTS
 
 from openfury.use_cases import VOICES, load, render
-from openfury.voice import (attach_ambience, make_llm, make_stt, make_tts, paced_tts_node,
-                            turn_taking_kwargs)
+from openfury.voice import (attach_ambience, make_llm, make_stt, make_tts, on_livekit_cloud,
+                            paced_tts_node, turn_taking_kwargs)
 
 load_dotenv()
 log = logging.getLogger("openfury.worker")
@@ -502,7 +502,9 @@ async def entrypoint(ctx: JobContext) -> None:
     # noise as 11.7 s of "candidate speaking" through her whole opener.
     phone = bool(inbound or values.get("candidate_phone") or values.get("campaign")
                  or os.environ.get("TELEPHONY"))
-    nc = noise_cancellation.BVCTelephony() if phone else noise_cancellation.BVC()
+    nc = None
+    if on_livekit_cloud():
+        nc = noise_cancellation.BVCTelephony() if phone else noise_cancellation.BVC()
     link = ({"participant_kinds": [rtc.ParticipantKind.PARTICIPANT_KIND_SIP]} if inbound
             # Pinned: an observer (a dashboard showing the live transcript) may join the room.
             # Unpinned, the agent links to whoever joins first — which can be the observer,

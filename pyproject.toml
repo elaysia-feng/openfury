@@ -1,10 +1,18 @@
 [project]
 name = "openfury"
 version = "0.1.0"
-description = "Open-source AI phone screening agent: places hiring calls, screens candidates, returns a verdict, transcript and recording by webhook."
+description = "The open-source AI recruiter by HumanBit: places hiring calls, screens candidates, returns a verdict, transcript and recording by webhook."
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.10"
+authors = [{ name = "HumanBit", email = "shivam@humanbit.ai" }]
+keywords = ["voice-agent", "recruiting", "hiring", "phone-screening", "livekit", "ai-recruiter"]
+classifiers = [
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Communications :: Telephony",
+  "Topic :: Office/Business",
+]
 dependencies = [
   "livekit-agents>=1.8.2,<2",
   "livekit-api>=1.2",
@@ -22,6 +30,10 @@ dependencies = [
   "pydantic>=2.7",
   "python-dotenv>=1.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/LazarusStack/openfury"
+Issues = "https://github.com/LazarusStack/openfury/issues"
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "pyflakes>=3"]

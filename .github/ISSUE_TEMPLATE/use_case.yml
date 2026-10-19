@@ -1,0 +1,21 @@
+name: New use case
+description: Propose a new kind of screening call (a new slug)
+labels: [use-case, good first issue]
+body:
+  - type: input
+    id: slug
+    attributes:
+      label: Slug
+      placeholder: nursing
+    validations: {required: true}
+  - type: textarea
+    id: why
+    attributes:
+      label: Who is being screened, and what must the call find out?
+      description: The deal-breakers, the questions a good recruiter asks, and what makes someone a clear yes or no.
+    validations: {required: true}
+  - type: textarea
+    id: fields
+    attributes:
+      label: Result fields you'd want back
+      placeholder: "licence_valid, shift_ok, years_icu"

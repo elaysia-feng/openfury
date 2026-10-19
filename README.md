@@ -1,6 +1,18 @@
+<div align="center">
+
 # openfury
 
-**An open-source AI recruiter that phones candidates, screens them, and hands back a decision.**
+### The open-source AI recruiter, by [HumanBit](https://humanbit.ai)
+
+**It phones candidates, screens them like a good recruiter, and hands back a decision.**
+
+[![CI](https://github.com/LazarusStack/openfury/actions/workflows/ci.yml/badge.svg)](https://github.com/LazarusStack/openfury/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+
+[Listen](#listen) · [Use cases](#use-cases) · [Quickstart](#quickstart) · [Contribute](#help-make-it-the-best-recruiting-agent-there-is)
+
+</div>
 
 You send a candidate, a job brief and a use case (`engineering`, `sales`, `support`, …).
 openfury calls the candidate, runs a structured screen in natural Indian English, and posts
@@ -18,7 +30,21 @@ that never leave a candidate's question unanswered.
 
 ## Listen
 
-<!-- SAMPLES -->
+Real phone calls from HumanBit's own deployment. The "candidates" are the two of us, Shivam
+and Apoorv, playing candidates and doing our best to break it. Stereo: the agent is on one
+channel, the candidate on the other. No real candidate's call is ever published here.
+
+| Call | Use case | What to listen for |
+|---|---|---|
+| [▶ Budget disclosure](samples/job-screening-budget-disclosure.mp3) · 2:36 | `job-screening` | The candidate asks for 50 lakhs. The agent states the 28-lakh budget once, plainly, and moves on. It never haggles. |
+| [▶ A clean qualified screen](samples/language-freelancer-qualified.mp3) · 2:28 | `language-freelancer` | A clean screen: laptop, languages, read/write check, hours, earnings, then the next step. |
+| [▶ Hinglish answer](samples/language-freelancer-hinglish.mp3) · 1:31 | `language-freelancer` | The candidate switches into Hindi mid-answer and the agent carries on without missing the number. |
+| [▶ "How did you get my number?"](samples/language-freelancer-how-did-you-get-my-number.mp3) · 2:07 | `language-freelancer` | A suspicious candidate, then a language mismatch. The agent answers, doesn't argue, and closes politely. |
+| [▶ "My boss is coming"](samples/edge-case-boss-is-coming.mp3) · 0:58 | any | The candidate begs it to hang up. The agent offers a callback in one line and ends the call. |
+
+These were recorded with HumanBit's voice ("Sanskriti") and an earlier version of the prompts.
+Want a sample for a slug that isn't here yet? Record one with
+[`examples/demo_call.py`](examples/demo_call.py) and open a PR.
 
 ## Use cases
 
@@ -67,6 +93,8 @@ Full API reference: run the server and open `/apidoc`.
 
 You need a [LiveKit Cloud](https://cloud.livekit.io) project (or self-hosted LiveKit) and API
 keys for Gemini, ElevenLabs and Smallest. Live calls also need an outbound SIP trunk in LiveKit.
+On self-hosted LiveKit, background-voice cancellation is switched off and a local turn model
+is used, because both of those features only run on LiveKit Cloud.
 
 ```bash
 git clone https://github.com/LazarusStack/openfury && cd openfury
@@ -98,8 +126,7 @@ curl localhost:8097/v1/calls -H "Authorization: Bearer $OF_TEST_KEY" \
 Switch to the live key to make a real call.
 
 **Try it without a phone.** [`examples/demo_call.py`](examples/demo_call.py) has the agent
-screen a simulated candidate (another voice agent with a persona) in a LiveKit room. The
-samples above were recorded that way.
+screen a simulated candidate (another voice agent with a persona) in a LiveKit room.
 
 ```bash
 AGENT_NAME=openfury-demo python -m openfury.worker start &
@@ -114,10 +141,24 @@ asks to be removed, and dialling pauses after two silent calls in a row. Call on
 who applied or consented, tell them calls may be recorded and handled by AI, and keep a person
 in charge of the hiring decision.
 
-## Contributing
+## Help make it the best recruiting agent there is
 
-Bug reports, new use cases, new voices and languages, other STT/TTS providers, and measured
-improvements to the voice are all welcome. Start with [CONTRIBUTING.md](CONTRIBUTING.md).
+openfury is meant to be built in the open. Recruiters, engineers and anyone who has sat
+through a bad screening call can make it better. Good places to start:
+
+- **A new use case.** `nursing`, `delivery-partner`, `teacher`, `campus-hiring`, `bpo-voice`,
+  `driver`. Three files each, no Python needed.
+- **New languages and voices.** Hindi-first, Tamil, Telugu, Bengali and Marathi screens, and
+  more STT/TTS providers.
+- **Measured voice improvements.** Turn-taking, latency and interruptions. Bring a recording
+  from before and after the change.
+- **Platform.** Postgres storage, a Docker Compose setup with self-hosted LiveKit, ATS
+  integrations (Greenhouse, Lever, Zoho Recruit) and a small review dashboard.
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md), pick an issue labelled
+[`good first issue`](https://github.com/LazarusStack/openfury/labels/good%20first%20issue) or
+open a [discussion](https://github.com/LazarusStack/openfury/discussions) with your idea.
+Everyone taking part agrees to the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## License
 

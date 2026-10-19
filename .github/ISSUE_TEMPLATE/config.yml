@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Ideas and questions
+    url: https://github.com/LazarusStack/openfury/discussions
+    about: Open a discussion for ideas, questions and show-and-tell.
+  - name: Hosted openfury
+    url: mailto:shivam@humanbit.ai,apoorv@humanbit.ai
+    about: Want HumanBit to run it for you (numbers, voices, scaling)? Email us.

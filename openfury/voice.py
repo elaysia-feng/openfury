@@ -66,6 +66,15 @@ def make_llm(model_env: str = "LLM_MODEL", default: str = "gemini-2.5-flash",
                       thinking_config=thinking)
 
 
+def on_livekit_cloud() -> bool:
+    """Noise cancellation and the v1 turn detector only run on LiveKit Cloud. Self-hosted
+    LiveKit gets the local turn model and no noise cancellation. LIVEKIT_CLOUD=0/1 overrides."""
+    flag = os.environ.get("LIVEKIT_CLOUD")
+    if flag is not None:
+        return flag.lower() in ("1", "true", "yes")
+    return ".livekit.cloud" in os.environ.get("LIVEKIT_URL", "")
+
+
 def turn_taking_kwargs() -> dict:
     """Turn-taking, measured on 363 real turn gaps in human recruiter call recordings:
     p10 0.40s, p50 0.58s, p75 0.84s, p90 1.34s, none under 0.30s.
@@ -74,7 +83,7 @@ def turn_taking_kwargs() -> dict:
         # version="v1" is NOT the default outside dev mode — `start` would otherwise get
         # "v1-mini", the local fallback, whose backchannel_probability is None. Backchannel
         # detection is Cloud-only in practice.
-        turn_detection=TurnDetector(version="v1"),
+        turn_detection=TurnDetector(version="v1" if on_livekit_cloud() else "v1-mini"),
         # One word is a backchannel, two is an interruption. NOTE: CallGideon's docs argue
         # against this — with min_words=2 the SDK DROPS a sub-2-word turn entirely, so a
         # one-word barge-in ("sorry", "wait") is discarded along with "okay". Their

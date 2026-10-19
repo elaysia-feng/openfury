@@ -1,0 +1,25 @@
+name: Bug
+description: Something broke, or the agent did something wrong on a call
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations: {required: true}
+  - type: input
+    id: use_case
+    attributes:
+      label: Use case (slug)
+      placeholder: engineering
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Transcript excerpt, logs or steps to reproduce
+      description: Remove candidates' names and phone numbers first. Never attach a real candidate's recording.
+      render: text
+  - type: input
+    id: stack
+    attributes:
+      label: Voice stack
+      placeholder: "TTS=eleven, STT=smallest, LLM=gemini-3.5-flash-lite, LiveKit Cloud"

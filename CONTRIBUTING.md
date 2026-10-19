@@ -1,6 +1,6 @@
 # Contributing to openfury
 
-Thanks for helping. The project has one rule that matters more than style: **a change to how
+Thanks for helping make openfury the best open recruiting agent there is. The project has one rule that matters more than style: **a change to how
 the agent sounds or behaves on a call should come with evidence**: a recording, a transcript,
 or a number measured before and after. Most of the comments in `voice.py` and `worker.py` are
 exactly that, and they are why the agent sounds like a person. Keep that habit.
@@ -63,5 +63,10 @@ recording to your PR.
 
 ## Don't commit real people
 
-Never commit a recording, transcript or phone number of a real candidate. Demo audio has to be
-simulated, or come from someone who explicitly agreed to have it published.
+Never commit a recording, transcript or phone number of a real candidate. Sample audio has to
+be simulated (`examples/demo_call.py`), or come from someone who explicitly agreed to have it
+published, like the team calls in `samples/`.
+
+## Reporting security issues
+
+Don't open a public issue. See [SECURITY.md](SECURITY.md).
