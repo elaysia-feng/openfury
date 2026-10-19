@@ -1,0 +1,131 @@
+{
+  "title": "Sales role screening",
+  "summary": "Job screening for sales: what they sell and to whom, inbound vs outbound, quota and attainment, deal size and cycle, fixed vs OTE pay.",
+  "extends": "job-screening",
+  "max_minutes": 12,
+  "wrap_up_minutes": 10,
+  "voice": "saavi",
+  "compose": true,
+  "required": [
+    "role_name",
+    "role_location",
+    "work_mode",
+    "experience_range",
+    "ctc_max",
+    "max_notice_period"
+  ],
+  "optional": [
+    "ctc_min",
+    "client_company",
+    "company_description",
+    "funding_stage",
+    "employee_size",
+    "reporting_to",
+    "role_description",
+    "additional_details",
+    "extra_context"
+  ],
+  "defaults": {
+    "ctc_min": "None.",
+    "additional_details": "None.",
+    "extra_context": "None.",
+    "client_company": ""
+  },
+  "fields": {
+    "Candidate name": "candidate_name",
+    "Current company and role": "current_company_and_role",
+    "Total experience": "total_experience",
+    "What they sell and to whom": "what_they_sell",
+    "Segment (SMB / Mid-market / Enterprise)": "segment",
+    "Inbound or outbound": "inbound_or_outbound",
+    "Quota": "quota",
+    "Attainment last year": "attainment_last_year",
+    "Typical deal size": "deal_size",
+    "Typical sales cycle": "sales_cycle",
+    "Deal they're proud of": "proud_deal",
+    "Reason for leaving": "reason_for_leaving",
+    "Current CTC (fixed / OTE)": "current_ctc",
+    "Expected CTC (fixed / OTE)": "expected_ctc",
+    "Budget disclosed (Yes/No) and reaction": "budget_disclosed_and_reaction",
+    "Notice period": "notice_period",
+    "Negotiable / buyout": "notice_negotiable_or_buyout",
+    "Current location": "current_location",
+    "Open to role location and work mode": "open_to_location_and_mode",
+    "Callback time (if applicable)": "callback_time",
+    "Not interested reason (if applicable)": "not_interested_reason",
+    "Asked to be removed from our database (Yes/No)": "asked_to_be_removed",
+    "Open questions to answer in next call": "open_questions",
+    "Other offers or interviews in progress": "other_offers"
+  },
+  "verdicts": [
+    "proceed",
+    "hold",
+    "reject",
+    "callback_scheduled",
+    "not_interested"
+  ],
+  "demo": {
+    "role_name": "Account Executive (Mid-market)",
+    "experience_range": "4 to 7 years",
+    "role_location": "Bangalore",
+    "work_mode": "hybrid",
+    "ctc_min": "15 lakhs fixed",
+    "ctc_max": "20 lakhs fixed, 30 lakhs OTE",
+    "max_notice_period": "60 days",
+    "company_description": "Acme builds payments infrastructure for small businesses.",
+    "funding_stage": "Series A",
+    "employee_size": "around 60 people",
+    "reporting_to": "the VP of Engineering",
+    "role_description": "Mid-market SaaS sales, outbound-heavy, India."
+  },
+  "sample": {
+    "turns": [
+      [
+        "agent",
+        "Hi {{candidate_name}}, this is {{agent_name}} from {{company_name}}. I'm calling about a {{role_name}} role. Do you have two minutes?"
+      ],
+      [
+        "candidate",
+        "Yes, go ahead."
+      ],
+      [
+        "agent",
+        "What's your quota, and how did you do against it last year?"
+      ],
+      [
+        "candidate",
+        "Quota was one crore twenty, I closed about one crore forty."
+      ]
+    ],
+    "result": {
+      "verdict": "proceed",
+      "summary": "[TEST] {{candidate_name}} sells to mid-market, mostly outbound, closed ~117% of quota last year. Pay split fixed/OTE captured.",
+      "fields": {
+        "quota": "1.2 Cr annual",
+        "attainment_last_year": "~117%",
+        "segment": "Mid-market",
+        "inbound_or_outbound": "Mostly outbound",
+        "asked_to_be_removed": "No"
+      },
+      "structured": {
+        "current_ctc_fixed_lpa": 14,
+        "current_ctc_ote_lpa": 20,
+        "expected_ctc_fixed_lpa": 18,
+        "expected_ctc_ote_lpa": 26,
+        "notice_days": 60,
+        "has_other_offers": false,
+        "years_experience": 4,
+        "quota_attainment_pct": 117,
+        "segment": "mid_market"
+      },
+      "risk_flags": [],
+      "must_capture": {
+        "relevance": "Relevant",
+        "track_record": "Above quota",
+        "budget_fit": "Within",
+        "notice_fit": "Within max",
+        "location_fit": "Accepted"
+      }
+    }
+  }
+}

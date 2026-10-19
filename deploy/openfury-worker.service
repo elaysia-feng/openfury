@@ -1,0 +1,16 @@
+[Unit]
+Description=openfury voice agent (LiveKit worker)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+WorkingDirectory=/opt/openfury
+EnvironmentFile=/opt/openfury/.env
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/openfury/.venv/bin/python -m openfury.worker start
+Restart=always
+RestartSec=5
+# A restart drops every live call this worker holds. Check open calls first.
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,64 @@
+{
+  "title": "Freelance language work",
+  "summary": "A 3-minute call for remote freelance work in Indian languages (annotation, transcription review, translation, voice data): laptop, English, languages spoken and written, hours per day, current earnings; then the next step.",
+  "max_minutes": 7,
+  "wrap_up_minutes": 5,
+  "voice": "monika",
+  "tts": {"model": "eleven_v4_turbo", "language": "hi"},
+  "compose": false,
+  "opener": "Hi, this is {{agent_name}} calling from {{company_name}}. Am I talking to {{candidate_name}}?",
+  "required": ["role_name", "work_description", "languages", "pay_range", "next_step", "company_description"],
+  "optional": ["company_location", "payment_terms", "profile_source", "additional_details"],
+  "defaults": {
+    "company_location": "India",
+    "payment_terms": "The team explains payment during onboarding.",
+    "profile_source": "\"I came across your profile while looking for people who speak these languages.\"",
+    "additional_details": "None."
+  },
+  "fields": {
+    "Candidate name": "candidate_name",
+    "Has laptop (Yes/No)": "has_laptop",
+    "English communication (Good / Basic / Poor)": "english_communication",
+    "Languages spoken": "languages_spoken",
+    "Languages read and written": "languages_read_written",
+    "Hours per day available": "hours_per_day",
+    "Current monthly earnings": "current_monthly_earnings",
+    "Current occupation (if mentioned)": "current_occupation",
+    "Told it is freelance, not full-time (Yes/No)": "told_freelance",
+    "Told the next step (Yes/No)": "told_next_step",
+    "Callback time (if applicable)": "callback_time",
+    "Not interested reason (if volunteered)": "not_interested_reason",
+    "Asked to be removed from our database (Yes/No)": "asked_to_be_removed",
+    "Questions the candidate asked that went unanswered": "unanswered_questions"
+  },
+  "verdicts": ["qualified", "not_qualified", "incomplete", "callback_scheduled", "not_interested",
+               "wrong_person", "voicemail"],
+  "demo": {
+    "role_name": "Freelance transcription reviewer",
+    "work_description": "reviewing and correcting AI transcriptions of short audio clips",
+    "languages": "Kannada, Telugu or Malayalam",
+    "pay_range": "fifteen to twenty-five thousand rupees a month, depending on hours",
+    "next_step": "the team will send you a short form on WhatsApp.",
+    "company_description": "Acme collects and reviews speech data for AI companies."
+  },
+  "sample": {
+    "turns": [
+      ["agent", "Hi, this is {{agent_name}} calling from {{company_name}}. Am I talking to {{candidate_name}}?"],
+      ["candidate", "Yes, speaking."],
+      ["agent", "Hey hi {{candidate_name}} — I came across your profile and you looked relevant for a {{role_name}} role, fully remote. Would you be interested?"],
+      ["candidate", "Yes, tell me."],
+      ["agent", "Got it — do you have a laptop you can work on?"],
+      ["candidate", "Yes, I have one."]
+    ],
+    "result": {
+      "verdict": "qualified",
+      "summary": "[TEST] {{candidate_name}} has a laptop, communicates well in English and reads and writes one of {{languages}}. Can give about 4 hours a day.",
+      "fields": {"has_laptop": "Yes", "english_communication": "Good", "hours_per_day": "4",
+                 "told_freelance": "Yes", "told_next_step": "Yes", "asked_to_be_removed": "No"},
+      "structured": {"has_laptop": true, "english_ok": true, "target_languages_written": [],
+                     "hours_per_day": 4, "monthly_earnings_inr": null},
+      "risk_flags": [],
+      "must_capture": {}
+    }
+  }
+}

@@ -1,0 +1,15 @@
+[Unit]
+Description=openfury API server (/v1, webhooks, dialer)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+WorkingDirectory=/opt/openfury
+EnvironmentFile=/opt/openfury/.env
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/openfury/.venv/bin/python -m openfury.server
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

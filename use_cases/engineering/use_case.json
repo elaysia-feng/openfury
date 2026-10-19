@@ -1,0 +1,132 @@
+{
+  "title": "Software engineering screening",
+  "summary": "Job screening plus a short technical-depth check: stack, one system they built and its scale, their own part, the reason behind one choice, production ownership.",
+  "extends": "job-screening",
+  "max_minutes": 12,
+  "wrap_up_minutes": 10,
+  "voice": "saavi",
+  "compose": true,
+  "required": [
+    "role_name",
+    "role_location",
+    "work_mode",
+    "experience_range",
+    "ctc_max",
+    "max_notice_period"
+  ],
+  "optional": [
+    "ctc_min",
+    "client_company",
+    "company_description",
+    "funding_stage",
+    "employee_size",
+    "reporting_to",
+    "role_description",
+    "additional_details",
+    "extra_context"
+  ],
+  "defaults": {
+    "ctc_min": "None.",
+    "additional_details": "None.",
+    "extra_context": "None.",
+    "client_company": ""
+  },
+  "fields": {
+    "Candidate name": "candidate_name",
+    "Current company and role": "current_company_and_role",
+    "Total experience": "total_experience",
+    "Primary stack": "primary_stack",
+    "System they built (what, scale)": "system_built",
+    "Their own contribution": "own_contribution",
+    "Reason given for a technical choice": "technical_choice_reason",
+    "Production ownership / on-call": "production_ownership",
+    "Technical depth (Specific / Mixed / Vague)": "technical_depth",
+    "Reason for leaving": "reason_for_leaving",
+    "Desired next role": "desired_next_role",
+    "Current CTC": "current_ctc",
+    "Expected CTC": "expected_ctc",
+    "Budget disclosed (Yes/No) and reaction": "budget_disclosed_and_reaction",
+    "Notice period": "notice_period",
+    "Negotiable / buyout": "notice_negotiable_or_buyout",
+    "Last working day (if applicable)": "last_working_day",
+    "Current location": "current_location",
+    "Open to role location and work mode": "open_to_location_and_mode",
+    "Relocation timeline (if applicable)": "relocation_timeline",
+    "Callback time (if applicable)": "callback_time",
+    "Not interested reason (if applicable)": "not_interested_reason",
+    "Asked to be removed from our database (Yes/No)": "asked_to_be_removed",
+    "Open questions to answer in next call": "open_questions",
+    "Expected CTC basis (fixed / incl. variable)": "expected_ctc_basis",
+    "Other offers or interviews in progress": "other_offers"
+  },
+  "verdicts": [
+    "proceed",
+    "hold",
+    "reject",
+    "callback_scheduled",
+    "not_interested"
+  ],
+  "demo": {
+    "role_name": "Backend Engineer",
+    "experience_range": "4 to 7 years",
+    "role_location": "Bangalore",
+    "work_mode": "hybrid",
+    "ctc_min": "18 lakhs per annum",
+    "ctc_max": "28 lakhs per annum",
+    "max_notice_period": "60 days",
+    "company_description": "Acme builds payments infrastructure for small businesses.",
+    "funding_stage": "Series A",
+    "employee_size": "around 60 people",
+    "reporting_to": "the VP of Engineering",
+    "role_description": "Python, distributed systems, and API design."
+  },
+  "sample": {
+    "turns": [
+      [
+        "agent",
+        "Hi {{candidate_name}}, this is {{agent_name}} from {{company_name}}. I'm calling about a {{role_name}} role. Do you have two minutes?"
+      ],
+      [
+        "candidate",
+        "Sure."
+      ],
+      [
+        "agent",
+        "Tell me about one thing you built recently that you're proud of?"
+      ],
+      [
+        "candidate",
+        "I rewrote our payments reconciliation service in Go — it handles about two million transactions a day."
+      ]
+    ],
+    "result": {
+      "verdict": "hold",
+      "summary": "[TEST] {{candidate_name}} owns a payments reconciliation service in Go at ~2M transactions a day and explained the design choices specifically. Expected CTC slightly above {{ctc_max}}, negotiable.",
+      "fields": {
+        "primary_stack": "Go, Postgres, AWS",
+        "system_built": "Payments reconciliation service, ~2M transactions/day",
+        "technical_depth": "Specific",
+        "notice_period": "30 days",
+        "asked_to_be_removed": "No"
+      },
+      "structured": {
+        "current_ctc_lpa": 22,
+        "expected_ctc_lpa": 30,
+        "notice_days": 30,
+        "has_other_offers": false,
+        "years_experience": 5,
+        "technical_depth": "specific"
+      },
+      "risk_flags": [
+        "expected_above_budget"
+      ],
+      "must_capture": {
+        "relevance": "Relevant",
+        "technical_depth": "Specific",
+        "budget_fit": "Soft mismatch",
+        "notice_fit": "Within max",
+        "location_fit": "Accepted"
+      }
+    }
+  }
+}

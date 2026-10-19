@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>openfury API</title>
+<meta name="description" content="Place AI phone screening calls from your CRM or ATS and receive the result, transcript, log and recording by webhook.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff;--bg2:#f7f7f8;--fg:#18181b;--muted:#5f5f6b;--line:#e4e4e7;
+  --accent:#4f46e5;--accent-soft:#eef2ff;--code-bg:#f4f4f5;--pre-bg:#18181b;--pre-fg:#e4e4e7;
+  --ok:#15803d;--warn:#b45309;--bad:#b91c1c;--tag:#f1f5f9;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f0f12;--bg2:#16161b;--fg:#ececf1;--muted:#a1a1aa;--line:#2a2a31;
+  --accent:#818cf8;--accent-soft:#1e1b4b;--code-bg:#1f1f25;--pre-bg:#0a0a0c;--pre-fg:#e4e4e7;
+  --ok:#4ade80;--warn:#fbbf24;--bad:#f87171;--tag:#1f2937;}}
+:root[data-theme="dark"]{
+  --bg:#0f0f12;--bg2:#16161b;--fg:#ececf1;--muted:#a1a1aa;--line:#2a2a31;
+  --accent:#818cf8;--accent-soft:#1e1b4b;--code-bg:#1f1f25;--pre-bg:#0a0a0c;--pre-fg:#e4e4e7;
+  --ok:#4ade80;--warn:#fbbf24;--bad:#f87171;--tag:#1f2937;}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:16px}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.65 var(--sans);-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.layout{display:grid;grid-template-columns:250px minmax(0,1fr);max-width:1180px;margin:0 auto}
+nav{position:sticky;top:0;height:100vh;overflow-y:auto;padding:28px 20px;border-right:1px solid var(--line);font-size:13.5px}
+nav .brand{font-weight:700;font-size:16px;margin-bottom:2px}
+nav .ver{color:var(--muted);font-size:12px;margin-bottom:22px}
+nav h4{margin:18px 0 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+nav a{display:block;color:var(--fg);padding:3px 0;opacity:.85}nav a:hover{opacity:1;color:var(--accent);text-decoration:none}
+nav a code{font-size:12px}
+main{padding:40px 48px 120px;min-width:0}
+h1{font-size:30px;line-height:1.2;margin:0 0 10px;letter-spacing:-.02em}
+h2{font-size:22px;margin:56px 0 12px;padding-top:12px;border-top:1px solid var(--line);letter-spacing:-.01em}
+h3{font-size:16.5px;margin:32px 0 8px}
+p,li{max-width:76ch}
+.lede{font-size:16.5px;color:var(--muted);max-width:70ch}
+code{font:13px var(--mono);background:var(--code-bg);padding:1px 5px;border-radius:4px}
+pre{background:var(--pre-bg);color:var(--pre-fg);padding:16px 18px;border-radius:10px;overflow-x:auto;font:12.8px/1.6 var(--mono);margin:12px 0 18px}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+table{border-collapse:collapse;width:100%;margin:10px 0 20px;font-size:14px;display:block;overflow-x:auto}
+th,td{text-align:left;padding:8px 12px 8px 0;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600}
+td:first-child{white-space:nowrap}
+.ep{display:flex;align-items:center;gap:10px;margin:36px 0 6px;flex-wrap:wrap}
+.ep h3{margin:0;font:600 15px var(--mono)}
+.m{font:700 11px var(--mono);padding:3px 7px;border-radius:5px;letter-spacing:.04em}
+.GET{background:#dcfce7;color:#166534}.POST{background:#e0e7ff;color:#3730a3}.DELETE{background:#fee2e2;color:#991b1b}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .GET{background:#14532d;color:#bbf7d0}:root:not([data-theme="light"]) .POST{background:#312e81;color:#c7d2fe}:root:not([data-theme="light"]) .DELETE{background:#7f1d1d;color:#fecaca}}
+.req{color:var(--bad);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.opt{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.note{background:var(--accent-soft);border-left:3px solid var(--accent);padding:12px 16px;border-radius:6px;margin:16px 0}
+.warn{background:color-mix(in srgb,var(--warn) 12%,transparent);border-left:3px solid var(--warn);padding:12px 16px;border-radius:6px;margin:16px 0}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font:13px var(--mono);margin:12px 0}
+.flow span{background:var(--tag);padding:3px 9px;border-radius:999px}
+.flow i{color:var(--muted);font-style:normal}
+.tabs{display:flex;gap:4px;margin-top:12px}
+.tabs button{font:12px var(--sans);background:var(--bg2);color:var(--muted);border:1px solid var(--line);border-bottom:none;padding:5px 12px;border-radius:6px 6px 0 0;cursor:pointer}
+.tabs button[aria-selected="true"]{color:var(--fg);background:var(--pre-bg);color:var(--pre-fg)}
+.tabs + pre{margin-top:0;border-top-left-radius:0}
+.theme{position:fixed;top:14px;right:16px;background:var(--bg2);border:1px solid var(--line);color:var(--fg);border-radius:8px;padding:5px 10px;font:12px var(--sans);cursor:pointer;z-index:5}
+@media (max-width:860px){
+  .layout{display:block}
+  nav{position:static;height:auto;border-right:none;border-bottom:1px solid var(--line);padding:20px 16px}
+  nav .links{display:none}
+  main{padding:24px 16px 80px}
+  h1{font-size:25px}
+}
+</style>
+</head>
+<body>
+<button class="theme" id="theme" aria-label="Toggle colour theme">Theme</button>
+<div class="layout">
+<nav>
+  <div class="brand">Screening API</div>
+  <div class="ver">v1 · updated 2026-10-16</div>
+  <div class="links">
+  <h4>Start</h4>
+  <a href="#overview">Overview</a>
+  <a href="#quickstart">Quickstart</a>
+  <a href="#auth">Authentication &amp; test mode</a>
+  <a href="#data">Your data, not ours</a>
+  <a href="#use-cases">Use cases (agents)</a>
+  <a href="#lifecycle">Call lifecycle</a>
+  <a href="#realtime">Real-time transcript</a>
+  <a href="#rules">Calling rules</a>
+  <h4>Endpoints</h4>
+  <a href="#create">POST <code>/v1/calls</code></a>
+  <a href="#stream">GET <code>…/stream</code></a>
+  <a href="#get">GET <code>/v1/calls/{id}</code></a>
+  <a href="#list">GET <code>/v1/calls</code></a>
+  <a href="#cancel">POST <code>…/cancel</code></a>
+  <a href="#redeliver">POST <code>…/redeliver</code></a>
+  <a href="#recording">GET <code>…/recording</code></a>
+  <a href="#suppressions">Suppressions</a>
+  <a href="#account">Account, voices, health</a>
+  <a href="#deliveries">GET <code>/v1/deliveries</code></a>
+  <h4>Webhooks</h4>
+  <a href="#webhooks">Events &amp; envelope</a>
+  <a href="#verify">Verifying signatures</a>
+  <a href="#retries">Retries &amp; ordering</a>
+  <h4>Reference</h4>
+  <a href="#call-object">The call object</a>
+  <a href="#result">The result</a>
+  <a href="#errors">Errors</a>
+  <a href="#compliance">Your responsibilities</a>
+  </div>
+</nav>
+
+<main>
+<h1 id="overview">Screening API</h1>
+<p class="lede">Send a candidate, a job and a <a href="#use-cases">use case</a>. Our voice agent phones the candidate, runs a structured screen, and posts back a verdict, the captured fields, a timestamped transcript, the full call log and a recording link. You can follow the transcript <a href="#realtime">live</a> while the call runs. The agent introduces itself under <b>your</b> recruiter name and <b>your</b> company. The candidate never hears ours.</p>
+
+<table>
+<tr><th>Base URL</th><td><code>{{PUBLIC_BASE_URL}}/v1</code></td></tr>
+<tr><th>Format</th><td>JSON in, JSON out. Timestamps are ISO 8601 UTC. Phone numbers are E.164.</td></tr>
+<tr><th>Auth</th><td><code>Authorization: Bearer of_live_…</code> or <code>of_test_…</code></td></tr>
+<tr><th>Delivery</th><td>Signed webhooks to the URL on your account, plus <code>GET</code> as a fallback.</td></tr>
+</table>
+
+<p>What the <code>job-screening</code> agent does on every call (the <code>language-freelancer</code> agent is described under <a href="#use-cases">Use cases</a>):</p>
+<ol>
+<li>It opens with: <i>“Hi Ravi, this is Priya from Acme Talent. I'm calling about a Backend Engineer role at Acme. Do you have two minutes?”</i></li>
+<li>If the candidate is busy, it books a callback time. If they're not interested, it accepts the first no. If it's the wrong person, it apologises. If they ask to be removed, it confirms and flags it.</li>
+<li>It covers the deal-breakers first: notice period, current and expected CTC, location and work mode, competing offers, experience. A firm mismatch ends the call politely.</li>
+<li>Only then does it pitch the role, ask the role-specific questions it writes from your job brief, and ask your <a href="#custom-fields">custom questions</a>.</li>
+<li>After the call, a separate review pass reads the transcript and produces the <a href="#result">result</a>. The verdict rules are mechanical, so an optimistic “Proceed” never reaches you on a candidate who is over budget or over notice.</li>
+</ol>
+
+<h2 id="quickstart">Quickstart</h2>
+<p><b>1. Place a call with your test key.</b> Nobody is dialled. You get the whole lifecycle and every webhook within about 10 seconds.</p>
+<pre><code>curl {{PUBLIC_BASE_URL}}/v1/calls \
+  -H "Authorization: Bearer $OF_TEST_KEY" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: cand-881-backend-attempt-1" \
+  -d '{
+    "candidate": { "name": "Ravi Kumar", "phone": "+919876543210" },
+    "job": {
+      "role_name": "Backend Engineer",
+      "client_company": "Acme",
+      "role_location": "Bangalore",
+      "work_mode": "hybrid",
+      "experience_range": "3 to 6 years",
+      "ctc_min": "18 lakhs per annum",
+      "ctc_max": "30 lakhs per annum",
+      "max_notice_period": "60 days",
+      "role_description": "Python, Kafka, Postgres; owns the payments ledger service."
+    },
+    "agent": { "name": "Priya", "company_name": "Acme Talent" },
+    "custom_fields": [
+      { "key": "open_to_night_shift", "question": "Are you open to a night shift once a month?" }
+    ],
+    "external_ref": "cand-881",
+    "metadata": { "crm_candidate_id": 881, "requisition": "REQ-204" }
+  }'</code></pre>
+<p><b>2. Receive the webhooks.</b> You'll get <code>call.status</code> four times (<code>dialing</code>, <code>ringing</code>, <code>in_progress</code>, <code>processing</code>), then one <code>call.completed</code> carrying everything. <a href="#verify">Verify the signature</a>, store the payload, and answer <code>2xx</code>.</p>
+<p><b>3. Switch to your live key.</b> Same request, real call. Download the recording before <code>retention.delete_after</code>.</p>
+<div class="note">Check your webhook endpoint at any time with <code>POST /v1/webhooks/test</code>. It sends a signed <code>webhook.test</code> event and tells you what your server answered.</div>
+
+<h2 id="auth">Authentication &amp; test mode</h2>
+<p>Every account has two keys. They differ only in what they do:</p>
+<table>
+<tr><th>Key</th><th>Effect</th></tr>
+<tr><td><code>of_live_…</code></td><td>Real phone calls, inside calling hours, within your concurrency limit.</td></tr>
+<tr><td><code>of_test_…</code></td><td>No call is placed. The full status sequence runs in about 10 seconds, and <code>call.completed</code> carries a realistic sample result built from your job brief, with <code>"test": true</code>. Calling hours don't apply.</td></tr>
+</table>
+<p>Calls made with one key can't be seen with the other. Keys are secrets for your server only. Never put them in a browser or mobile app. If a key leaks, rotate it (<code>python -m openfury.api tenant-set &lt;id&gt; --rotate-keys</code>). The old key stops working immediately.</p>
+
+<h2 id="data">Your data, not ours</h2>
+<p>We are a pipe, not a database. Everything a call produces is delivered to you, and <b>you are the system of record</b>.</p>
+<ul>
+<li>After the <code>call.completed</code> webhook is delivered <i>and</i> the retention window has passed (<b>24 hours</b> by default, up to 72 on request), we delete the transcript, result, call log, recording, the request you sent and the phone number.</li>
+<li>Until then, <code>GET /v1/calls/{id}</code> returns the full payload, and the recording link works. After deletion, <code>GET</code> returns only ids, timestamps, outcome and duration (<code>"purged": true</code>), and the recording link returns <code>410</code>.</li>
+<li>If your endpoint is down, we keep retrying for about 16 hours and hold the data until delivery succeeds or retries are exhausted. After that the retention window applies.</li>
+<li>One exception: when a candidate asks on the call not to be contacted again, we keep a salted hash of their number on your account, so that no future call ever reaches them. See <a href="#suppressions">Suppressions</a>.</li>
+</ul>
+<div class="warn"><b>Download the recording.</b> <code>recording.url</code> is a time-limited link. Fetch the MP3 into your own storage when you receive <code>call.completed</code>. Don't store our link.</div>
+
+<h2 id="use-cases">Use cases (agents)</h2>
+<p>Each use case is a separate agent with its own script, its own result schema and its own time limit. Choose one per call with <code>"use_case"</code>. If you leave it out, it defaults to <code>job-screening</code>. <code>GET /v1/use-cases</code> returns this table as JSON, so your integration can read the required fields instead of hardcoding them.</p>
+<table>
+<tr><th>use_case</th><th>For</th><th>Call</th><th>Verdicts</th></tr>
+<tr><td><code>job-screening</code></td><td>Full-time, salaried roles. Deal-breakers first (notice, current and expected CTC, location and mode, other offers, experience), then the pitch and role-specific probes the agent writes from your brief.</td><td>Up to 12 min, voice <code>saavi</code></td><td><code>proceed</code> <code>hold</code> <code>reject</code> <code>callback_scheduled</code> <code>not_interested</code></td></tr>
+<tr><td><code>language-freelancer</code></td><td>Remote freelance work in Indian languages: annotation, transcription review, translation, voice data. Five checks: laptop, English, languages spoken <i>and</i> written, hours per day, current earnings. Then it states that the work is freelance and gives your next step.</td><td>About 3 min, at most 7, voice <code>monika</code></td><td><code>qualified</code> <code>not_qualified</code> <code>incomplete</code> <code>callback_scheduled</code> <code>not_interested</code> <code>wrong_person</code> <code>voicemail</code></td></tr>
+</table>
+<p>Need a different kind of call, such as campus hiring, blue-collar roles, or reference checks? Each one is a new agent with its own slug. Ask your account manager.</p>
+
+<h3 id="job-screening-brief"><code>job</code> for <code>job-screening</code></h3>
+<p>See <a href="#job-brief">the job brief</a> under <code>POST /v1/calls</code>.</p>
+
+<h3 id="freelance-brief"><code>job</code> for <code>language-freelancer</code></h3>
+<p>The agent says only what is written here. Every value is something it may say aloud, so write it as spoken English.</p>
+<table>
+<tr><th>Field</th><th></th><th>Used for</th></tr>
+<tr><td><code>role_name</code></td><td class="req">required</td><td>“It's a <i>Kannada transcription reviewer</i> role, fully remote.”</td></tr>
+<tr><td><code>work_description</code></td><td class="req">required</td><td>What the work actually is, in one line, e.g. “listen to short audio clips and correct the AI's transcript”.</td></tr>
+<tr><td><code>languages</code></td><td class="req">required</td><td>The target languages, e.g. “Kannada or Telugu”. The candidate must speak <i>and</i> read/write at least one of them to qualify.</td></tr>
+<tr><td><code>pay_range</code></td><td class="req">required</td><td>Spoken pay, e.g. “fifteen to twenty-five thousand rupees a month”. The agent never quotes any other figure.</td></tr>
+<tr><td><code>next_step</code></td><td class="req">required</td><td>What happens after the call, e.g. “The team will send a short form on WhatsApp today.” The agent never names a channel that isn't written here.</td></tr>
+<tr><td><code>company_description</code></td><td class="req">required</td><td>One or two sentences about your company. This is also the answer to “Is this a scam?”, so make it concrete.</td></tr>
+<tr><td><code>company_location</code></td><td class="opt">optional</td><td>City, for “Where are you based?”. Default: “India”.</td></tr>
+<tr><td><code>payment_terms</code></td><td class="opt">optional</td><td>The answer to “How will I get paid?”. Default: the team explains it during onboarding. The agent never collects bank details.</td></tr>
+<tr><td><code>profile_source</code></td><td class="opt">optional</td><td>The answer to “How did you get my number?”, e.g. <code>"I came across your profile on Naukri."</code></td></tr>
+<tr><td><code>additional_details</code></td><td class="opt">optional</td><td>Anything else it may say if asked: training, experience needed, minimum hours.</td></tr>
+</table>
+<pre><code>{
+  "use_case": "language-freelancer",
+  "candidate": { "name": "Asha Rao", "phone": "+919876500001" },
+  "job": {
+    "role_name": "Kannada transcription reviewer",
+    "work_description": "listen to short audio clips and correct the AI's transcript",
+    "languages": "Kannada or Telugu",
+    "pay_range": "fifteen to twenty-five thousand rupees a month",
+    "next_step": "The team will send a short form on WhatsApp today.",
+    "company_description": "Acme Talent places freelancers with AI companies; about two thousand people work with us today.",
+    "profile_source": "I came across your profile on Naukri."
+  },
+  "agent": { "name": "Meera", "company_name": "Acme Talent" }
+}</code></pre>
+<h3>Result fields for <code>language-freelancer</code></h3>
+<p><code>fields</code>: <code>candidate_name</code>, <code>has_laptop</code>, <code>english_communication</code> (Good / Basic / Poor), <code>languages_spoken</code>, <code>languages_read_written</code>, <code>hours_per_day</code>, <code>current_monthly_earnings</code>, <code>current_occupation</code>, <code>told_freelance</code>, <code>told_next_step</code>, <code>callback_time</code>, <code>not_interested_reason</code>, <code>asked_to_be_removed</code>, <code>unanswered_questions</code>.</p>
+<p><code>structured</code>: <code>has_laptop</code> (bool), <code>english_ok</code> (bool), <code>target_languages_written</code> (array, lowercase), <code>hours_per_day</code> (number), <code>monthly_earnings_inr</code> (number). <code>risk_flags</code>: <code>scam_concern</code>, <code>phone_only</code>, <code>speaks_but_cannot_write</code>, <code>low_english</code>, <code>very_low_hours</code>.</p>
+<p>Verdict rules, in order: <code>voicemail</code> if no human answered. Then <code>callback_scheduled</code>, <code>not_interested</code> or <code>wrong_person</code> if the call ended that way. Then <code>not_qualified</code> if the candidate firmly has no laptop, speaks and writes none of the languages, or can't hold a basic English conversation. Then <code>qualified</code> if they have a laptop, can communicate in English, and speak and write at least one of the languages. Otherwise <code>incomplete</code>.</p>
+
+<h2 id="lifecycle">Call lifecycle</h2>
+<div class="flow"><span>queued</span><i>→</i><span>dialing</span><i>→</i><span>ringing</span><i>→</i><span>in_progress</span><i>→</i><span>processing</span><i>→</i><span>ended</span></div>
+<p>A call that is never answered goes from <code>ringing</code> straight to <code>ended</code>. If you asked for retries, it goes back to <code>queued</code> instead and keeps the same call id. <code>attempt</code> counts the dials. <code>processing</code> is the 10–60 seconds after hang-up while the result and recording are produced.</p>
+<h3>Outcomes</h3>
+<p>Every ended call has exactly one <code>outcome</code>:</p>
+<table>
+<tr><th>outcome</th><th>Meaning</th><th>Has result?</th></tr>
+<tr><td><code>answered</code></td><td>A person picked up and the call ran. See <code>end_reason</code> and <code>result.verdict</code> for how it went.</td><td>Yes (null if nobody spoke)</td></tr>
+<tr><td><code>voicemail</code></td><td>An answering machine or IVR picked up. The agent hung up without leaving a message.</td><td>Usually no</td></tr>
+<tr><td><code>no_answer</code></td><td>Rang for 45 s unanswered, or was rejected or unreachable, and no retries were left.</td><td>No</td></tr>
+<tr><td><code>failed</code></td><td>The call could not be placed. <code>error</code> says why.</td><td>No</td></tr>
+<tr><td><code>cancelled</code></td><td>You cancelled it.</td><td>Only if it had already been answered</td></tr>
+<tr><td><code>suppressed</code></td><td>The number was added to your do-not-call list after this call was queued, so it was never dialled.</td><td>No</td></tr>
+</table>
+<h3><code>end_reason</code> on answered calls</h3>
+<p><code>completed</code> · <code>not_interested</code> · <code>callback</code> · <code>wrong_person</code> · <code>removed</code> · <code>time_cap</code> · <code>voicemail</code> · <code>no_response</code> · <code>candidate_hung_up</code></p>
+<p>The agent ends the call itself. After its closing line it hangs up within a few seconds. If the candidate goes silent for 15 seconds, it checks once whether they're still there. After a second silence it says goodbye and hangs up, with <code>end_reason: no_response</code>.</p>
+
+<h2 id="realtime">Real-time transcript</h2>
+<p>You can follow a call while it happens, for example to show a recruiter the conversation live in your CRM. Each finished turn (one person's sentence or two, once they stop talking) is available about 1–2 seconds after it's spoken. There are three ways to get it, and you can use any of them:</p>
+<table>
+<tr><th>Way</th><th>Best for</th><th>How</th></tr>
+<tr><td><b>Webhook per turn</b></td><td>Systems that already take our webhooks</td><td>Set <code>"realtime_transcript": true</code> on <code>POST /v1/calls</code>. Each turn arrives as a <code>call.transcript</code> event at your webhook URL.</td></tr>
+<tr><td><b>Event stream</b></td><td>A live view in your app</td><td><code>GET /v1/calls/{id}/stream</code> streams server-sent events: <code>status</code>, <code>transcript</code>, then one <code>completed</code>, after which the connection closes. Works for any call and needs no flag.</td></tr>
+<tr><td><b>Polling</b></td><td>Simple scripts</td><td><code>GET /v1/calls/{id}</code> while <code>status</code> is <code>in_progress</code> or <code>processing</code> includes <code>live_transcript</code>: every finished turn so far.</td></tr>
+</table>
+<p>A turn looks the same in all three:</p>
+<pre><code>{ "speaker": "candidate", "text": "Sixty days, but buyout is possible.", "at_s": 41.3, "interrupted": false }
+// speaker: "agent" | "candidate"   at_s: seconds since the agent joined the call
+// interrupted: true when the agent was cut off mid-sentence by the candidate</code></pre>
+<p>The <code>call.transcript</code> webhook carries <code>data: {id, external_ref, metadata, index, turn}</code>. <code>index</code> starts at 0 and has no gaps. Webhooks can arrive out of order, so sort by <code>index</code>. The authoritative transcript, with per-turn latency and speech-recognition confidence, is the one in <code>call.completed</code>.</p>
+<div class="note">Only finished turns are sent, never half-recognised words, so text you've already shown never changes. Your API key must stay on your server, so to show a live transcript in a browser, open the stream from your backend and relay it to the page.</div>
+
+<h2 id="rules">Calling rules</h2>
+<p>These rules are enforced for every account. They protect the candidates and your sender reputation.</p>
+<table>
+<tr><th>Rule</th><th>Detail</th></tr>
+<tr><td>Numbers</td><td>Mobile numbers in E.164 (<code>+&lt;country&gt;&lt;number&gt;</code>). A bare 10-digit number is read as Indian (<code>DEFAULT_COUNTRY_CODE</code>).</td></tr>
+<tr><td>Calling hours</td><td>09:30–20:30 in the account's timezone by default (adjustable per account; default Asia/Kolkata). Calls queued outside the window wait for it. They are not dropped.</td></tr>
+<tr><td>Concurrency</td><td>Up to <strong>10 simultaneous calls</strong> per account. Send as many calls as you like: anything over 10 waits in the queue in <code>schedule_at</code> order and starts as soon as a slot frees up, with no error and nothing to retry on your side. Queued calls stay <code>queued</code> until they dial. <code>GET /v1/account</code> shows your limit and how many calls are open in each status. The operator can raise it per account (<code>--concurrency</code>).</td></tr>
+<tr><td>One open call per number</td><td>A second call to a number that already has a queued or live call is refused with <code>409 call_in_progress</code>.</td></tr>
+<tr><td>Do-not-call</td><td>A number on your suppression list is refused with <code>409 do_not_call</code>. Candidates who ask to be removed on a call are added automatically.</td></tr>
+<tr><td>Ringing</td><td>45 seconds, then <code>no_answer</code>.</td></tr>
+<tr><td>Length</td><td><code>job-screening</code>: the agent starts wrapping up at 10 minutes and the call ends at 12. <code>language-freelancer</code>: wraps up at 5 minutes and ends at 7.</td></tr>
+<tr><td>AI disclosure</td><td>If a candidate asks whether they're speaking to an AI, the agent says yes. It always does, and this can't be configured.</td></tr>
+<tr><td>Fixed behaviour</td><td>The voice rules, safety rules (never asks for bank or payment details, never states a salary or offer that is not in your brief, never asks about religion, caste, marital status, health, age or other protected topics) and verdict rules are fixed. You shape <i>what</i> is asked. You can't change <i>how</i> the agent behaves.</td></tr>
+</table>
+
+<h2>Endpoints</h2>
+
+<div class="ep" id="create"><span class="m POST">POST</span><h3>/v1/calls</h3></div>
+<p>Queue a screening call. Returns <code>202</code> with the call object in status <code>queued</code>.</p>
+<h3>Headers</h3>
+<table>
+<tr><th>Header</th><th></th><th>Description</th></tr>
+<tr><td><code>Idempotency-Key</code></td><td class="opt">recommended</td><td>Any string up to 200 characters, unique per intended call. Repeating a request with the same key returns the original call with <code>200</code> and never dials twice. Use it on every retry of a network error.</td></tr>
+</table>
+<h3>Body</h3>
+<table>
+<tr><th>Field</th><th></th><th>Description</th></tr>
+<tr><td><code>use_case</code></td><td class="opt">optional</td><td>Which agent makes the call: <code>job-screening</code> (default), <code>engineering</code>, <code>sales</code>, <code>support</code> or <code>language-freelancer</code>. <code>engineering</code>, <code>sales</code> and <code>support</code> take the same job brief as <code>job-screening</code> and return extra result fields; <code>GET /v1/use-cases</code> lists each one's fields. See <a href="#use-cases">Use cases</a>.</td></tr>
+<tr><td><code>candidate.name</code></td><td class="req">required</td><td>Full name. The agent uses the first name only.</td></tr>
+<tr><td><code>candidate.phone</code></td><td class="req">required</td><td>Mobile number, E.164.</td></tr>
+<tr><td><code>candidate.variables</code></td><td class="opt">optional</td><td>A string→string map of extra facts about this candidate that the agent may use, e.g. <code>{"current_company": "Infosys"}</code>.</td></tr>
+<tr><td><code>job</code></td><td class="req">required</td><td>The role brief. Its fields depend on <code>use_case</code>: <a href="#job-brief">job-screening</a> or <a href="#freelance-brief">language-freelancer</a>. Unknown keys are rejected so a typo can't silently drop a fact. Each value can be up to 3,000 characters.</td></tr>
+<tr><td><code>realtime_transcript</code></td><td class="opt">optional</td><td><code>true</code> sends each finished turn as a <code>call.transcript</code> webhook while the call runs. Default <code>false</code>. See <a href="#realtime">Real-time transcript</a>.</td></tr>
+<tr><td><code>agent.name</code></td><td class="opt">optional</td><td>The recruiter name the agent uses, e.g. <code>"Priya"</code>. Defaults to your account's setting.</td></tr>
+<tr><td><code>agent.company_name</code></td><td class="opt">optional*</td><td>The company the agent says it calls from (usually your agency). *Required unless your account has a default.</td></tr>
+<tr><td><code>agent.voice</code></td><td class="opt">optional</td><td>A voice id from <code>GET /v1/voices</code>.</td></tr>
+<tr><td id="custom-fields"><code>custom_fields</code></td><td class="opt">optional</td><td>Up to 8 extra questions, each <code>{"key", "question"}</code>. The agent asks them once the deal-breakers are covered, and the answers come back in <code>result.custom[key]</code> (<code>"Not captured"</code> if not asked or not answered). <code>key</code> is lowercase snake_case, up to 40 characters.</td></tr>
+<tr><td><code>external_ref</code></td><td class="opt">optional</td><td>Your id for this candidate or application. It is echoed on every event and can be filtered on with <code>GET /v1/calls?external_ref=</code>.</td></tr>
+<tr><td><code>metadata</code></td><td class="opt">optional</td><td>Any JSON object up to 4 KB, echoed back unchanged on every event.</td></tr>
+<tr><td><code>schedule_at</code></td><td class="opt">optional</td><td>ISO 8601 with a timezone, up to 30 days ahead. Use it for a callback the candidate asked for. It is still subject to calling hours.</td></tr>
+<tr><td><code>retry_no_answer</code></td><td class="opt">optional</td><td>0–3 (default 0). Extra dials if nobody answers. Same call id, and <code>attempt</code> increments.</td></tr>
+<tr><td><code>retry_after_minutes</code></td><td class="opt">optional</td><td>10–1440 (default 120). Gap between retries.</td></tr>
+</table>
+<h3 id="job-brief">The <code>job</code> brief (<code>job-screening</code>)</h3>
+<p>Write values the way a recruiter would say them aloud: <code>"28 lakhs per annum"</code>, not <code>28</code>. The agent reads them on the phone.</p>
+<table>
+<tr><th>Field</th><th></th><th>Used for</th></tr>
+<tr><td><code>role_name</code></td><td class="req">required</td><td>The opener and the pitch.</td></tr>
+<tr><td><code>role_location</code></td><td class="req">required</td><td>The location deal-breaker.</td></tr>
+<tr><td><code>work_mode</code></td><td class="req">required</td><td><code>office</code>, <code>hybrid</code>, <code>remote</code>, or a phrase such as “3 days in office”.</td></tr>
+<tr><td><code>experience_range</code></td><td class="req">required</td><td>Relevance check.</td></tr>
+<tr><td><code>ctc_max</code></td><td class="req">required</td><td>The budget ceiling. It is disclosed <i>only</i> if the candidate's current or expected CTC is above it.</td></tr>
+<tr><td><code>max_notice_period</code></td><td class="req">required</td><td>The notice deal-breaker.</td></tr>
+<tr><td><code>ctc_min</code></td><td class="opt">optional</td><td>Bottom of the band. It is never spoken first.</td></tr>
+<tr><td><code>client_company</code></td><td class="opt">optional</td><td>The hiring company, if you are an agency. The agent says it is recruiting <i>for</i> them.</td></tr>
+<tr><td><code>company_description</code></td><td class="opt">optional</td><td>What the hiring company does. Used in the two-sentence pitch.</td></tr>
+<tr><td><code>role_description</code></td><td class="opt">optional</td><td>Stack, scope and must-haves. The agent writes its role-specific probes and green and red flags from this.</td></tr>
+<tr><td><code>funding_stage</code>, <code>employee_size</code>, <code>reporting_to</code></td><td class="opt">optional</td><td>Answers to the questions candidates commonly ask.</td></tr>
+<tr><td><code>additional_details</code></td><td class="opt">optional</td><td>Benefits, interview process, anything else the agent may say if asked.</td></tr>
+<tr><td><code>extra_context</code></td><td class="opt">optional</td><td>Private instructions, e.g. “If asked where we found their profile, say Naukri.”</td></tr>
+</table>
+<p>The agent never invents a salary, benefit or technology that is not in the brief. A thin brief makes for a shorter screen, not a made-up one.</p>
+<h3>Responses</h3>
+<table>
+<tr><td><code>202</code></td><td>Queued. Body: the <a href="#call-object">call object</a>.</td></tr>
+<tr><td><code>200</code></td><td>Same <code>Idempotency-Key</code> as an earlier request. Body: that call.</td></tr>
+<tr><td><code>409</code></td><td><code>call_in_progress</code> or <code>do_not_call</code>.</td></tr>
+<tr><td><code>422</code></td><td><code>invalid_request</code>, <code>invalid_use_case</code>, <code>invalid_phone</code> or <code>invalid_voice</code>. The message lists every problem at once.</td></tr>
+</table>
+
+<div class="ep" id="stream"><span class="m GET">GET</span><h3>/v1/calls/{id}/stream</h3></div>
+<p>A live feed of server-sent events (<code>text/event-stream</code>) for one call. On connect you get the current <code>status</code> and every turn so far, then each new one as it happens. A <code>: keep-alive</code> comment is sent about every second. After <code>completed</code> (whose data is the full call object) the server closes the connection. If you disconnect, reconnect and skip the indexes you already have.</p>
+<pre><code>event: status
+data: {"id": "call_…", "status": "in_progress", "sequence": 4}
+
+event: transcript
+data: {"id": "call_…", "index": 0, "turn": {"speaker": "agent", "text": "Hi Ravi, this is Priya from Acme Talent. …", "at_s": 0.0, "interrupted": false}}
+
+event: completed
+data: { …the call object… }</code></pre>
+<div class="tabs" role="tablist"><button role="tab" aria-selected="true" data-t="py">Python</button><button role="tab" aria-selected="false" data-t="js">Node.js</button><button role="tab" aria-selected="false" data-t="sh">curl</button></div>
+<pre data-p="py"><code>import json, httpx
+
+with httpx.stream("GET", f"{{PUBLIC_BASE_URL}}/v1/calls/{call_id}/stream",
+                  headers={"Authorization": f"Bearer {KEY}"}, timeout=None) as r:
+    event = None
+    for line in r.iter_lines():
+        if line.startswith("event: "):
+            event = line[7:]
+        elif line.startswith("data: "):
+            data = json.loads(line[6:])
+            if event == "transcript":
+                print(data["turn"]["speaker"], ":", data["turn"]["text"])
+            elif event == "completed":
+                save(data)   # the full call object, same as the call.completed webhook</code></pre>
+<pre data-p="js" hidden><code>// Node 18+. EventSource can't send an Authorization header, so read the stream with fetch.
+const res = await fetch(`{{PUBLIC_BASE_URL}}/v1/calls/${callId}/stream`, {
+  headers: { Authorization: `Bearer ${KEY}` },
+});
+const decoder = new TextDecoder();
+let buf = "";
+for await (const chunk of res.body) {
+  buf += decoder.decode(chunk, { stream: true });
+  let i;
+  while ((i = buf.indexOf("\n\n")) >= 0) {
+    const block = buf.slice(0, i); buf = buf.slice(i + 2);
+    const event = block.match(/^event: (.*)$/m)?.[1];
+    const data = block.match(/^data: (.*)$/m)?.[1];
+    if (event === "transcript") console.log(JSON.parse(data).turn.text);
+  }
+}</code></pre>
+<pre data-p="sh" hidden><code>curl -N {{PUBLIC_BASE_URL}}/v1/calls/$CALL_ID/stream -H "Authorization: Bearer $OF_KEY"</code></pre>
+
+<div class="ep" id="get"><span class="m GET">GET</span><h3>/v1/calls/{id}</h3></div>
+<p>The call as it stands. Once <code>status</code> is <code>ended</code>, this returns the same body as the <code>call.completed</code> webhook (with a fresh recording link) until the data is deleted. Use it to reconcile if you missed a webhook. Don't poll it in a tight loop. Webhooks are the primary channel.</p>
+
+<div class="ep" id="list"><span class="m GET">GET</span><h3>/v1/calls</h3></div>
+<p>Summaries, newest first. Query: <code>status</code>, <code>external_ref</code>, <code>limit</code> (1–200, default 50), <code>before</code> (a call id, for paging). The response is <code>{"data": [...], "has_more", "next_before"}</code>. Summaries don't include results. Fetch a call by id for those.</p>
+
+<div class="ep" id="cancel"><span class="m POST">POST</span><h3>/v1/calls/{id}/cancel</h3></div>
+<p>A queued call ends at once with <code>outcome: cancelled</code>. A ringing call is hung up. A call in progress is hung up mid-conversation. That's abrupt for the candidate, so use it only when you must. If the call was already answered, the result is still produced and delivered. Returns <code>409 already_ended</code> if it has already ended.</p>
+
+<div class="ep" id="redeliver"><span class="m POST">POST</span><h3>/v1/calls/{id}/redeliver</h3></div>
+<p>Queue the <code>call.completed</code> webhook again, for example after fixing a bug in your handler. Only works before the data is deleted.</p>
+
+<div class="ep" id="recording"><span class="m GET">GET</span><h3>/v1/calls/{id}/recording?exp=…&amp;sig=…</h3></div>
+<p>The stereo MP3, 96 kbps: <b>left channel = candidate, right channel = agent</b>, on one aligned timeline. The link is self-authenticating, so don't send your API key with it. Get it from <code>recording.url</code>. It returns <code>410</code> after <code>recording.expires_at</code>.</p>
+
+<div class="ep" id="suppressions"><span class="m POST">POST</span><h3>/v1/suppressions</h3></div>
+<p>Add a number to your account's do-not-call list. Body: <code>{"phone": "+919876543210", "reason": "optional"}</code>. Queued calls to that number end as <code>suppressed</code> and are never dialled. We store only a salted hash.</p>
+<div class="ep"><span class="m DELETE">DELETE</span><h3>/v1/suppressions/{phone}</h3></div>
+<p>Remove a number, for example when a candidate opts back in. Returns <code>{"removed": true|false}</code>.</p>
+
+<div class="ep" id="account"><span class="m GET">GET</span><h3>/v1/account</h3></div>
+<p>Your settings (webhook URL, concurrency, calling hours, retention, agent defaults) and a live count of open calls by status, for the key's mode.</p>
+<div class="ep"><span class="m GET">GET</span><h3>/v1/use-cases</h3></div>
+<p>The agents you can choose with <code>use_case</code>: title, summary, time limit, default voice, required and optional <code>job</code> fields, result field keys, and verdicts.</p>
+<div class="ep"><span class="m GET">GET</span><h3>/v1/voices</h3></div>
+<p>The voices you can pass as <code>agent.voice</code>: <code>saavi</code> (warm, professional, the default for <code>job-screening</code>) and <code>monika</code> (casual and young, the default for <code>language-freelancer</code>). Both are female, Indian-English voices that have been used on real Indian phone calls.</p>
+<div class="ep"><span class="m GET">GET</span><h3>/v1/health</h3></div>
+<p>Needs no authentication. Returns <code>{"ok": true}</code>.</p>
+<div class="ep"><span class="m POST">POST</span><h3>/v1/webhooks/test</h3></div>
+<p>Sends a signed <code>webhook.test</code> event to your webhook URL now. Returns <code>{"delivered": bool, "status_code"}</code>.</p>
+
+<div class="ep" id="deliveries"><span class="m GET">GET</span><h3>/v1/deliveries</h3></div>
+<p>The webhook delivery log: each event, its <code>state</code> (<code>pending</code>, <code>delivered</code>, <code>failed</code>), attempts, the last error your endpoint returned, and the next retry time. Query: <code>state</code>, <code>limit</code>.</p>
+
+<h2 id="webhooks">Webhooks</h2>
+<p>We <code>POST</code> JSON to the webhook URL on your account. Every delivery has the same envelope:</p>
+<pre><code>{
+  "id": "dlv_79279b748a53b857745c",       // unique per event: use it to de-duplicate
+  "type": "call.completed",
+  "created_at": "2026-10-16T09:24:57.069597Z",
+  "data": { ... }
+}</code></pre>
+<table>
+<tr><th>Event</th><th>When</th><th><code>data</code></th></tr>
+<tr><td><code>call.status</code></td><td>Each move to <code>dialing</code>, <code>ringing</code>, <code>in_progress</code>, <code>processing</code>, or back to <code>queued</code> for a retry.</td><td><code>{id, status, sequence, external_ref, metadata, at}</code></td></tr>
+<tr><td><code>call.transcript</code></td><td>Each finished turn during the call, only when the call was created with <code>"realtime_transcript": true</code>.</td><td><code>{id, index, turn, external_ref, metadata}</code>. See <a href="#realtime">Real-time transcript</a>.</td></tr>
+<tr><td><code>call.completed</code></td><td>Once per call, when it ends with any outcome.</td><td>The full <a href="#call-object">call object</a>: result, transcript, log, recording, usage.</td></tr>
+<tr><td><code>webhook.test</code></td><td>Only when you call <code>POST /v1/webhooks/test</code>.</td><td><code>{"hello": "world"}</code></td></tr>
+</table>
+<p>Headers on every delivery:</p>
+<table>
+<tr><td><code>X-Webhook-Id</code></td><td>Same as the envelope <code>id</code>.</td></tr>
+<tr><td><code>X-Webhook-Event</code></td><td>Same as <code>type</code>.</td></tr>
+<tr><td><code>X-Webhook-Signature</code></td><td><code>t=&lt;unix seconds&gt;,v1=&lt;hex HMAC-SHA256&gt;</code></td></tr>
+</table>
+
+<h3 id="verify">Verifying signatures</h3>
+<p>Compute HMAC-SHA256 with your <code>whsec_…</code> secret over the string <code>"{t}.{raw body}"</code>, compare it in constant time with <code>v1</code>, and reject a <code>t</code> more than 5 minutes old. Use the <b>raw</b> request body. Re-serialised JSON won't match.</p>
+<div class="tabs" role="tablist"><button role="tab" aria-selected="true" data-t="py">Python</button><button role="tab" aria-selected="false" data-t="js">Node.js</button></div>
+<pre data-p="py"><code>import hashlib, hmac, time
+
+def verify(raw_body: bytes, header: str, secret: str) -> bool:
+    parts = dict(p.split("=", 1) for p in header.split(","))
+    t, sig = parts["t"], parts["v1"]
+    if abs(time.time() - int(t)) > 300:
+        return False
+    want = hmac.new(secret.encode(), f"{t}.".encode() + raw_body, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(want, sig)
+
+# Flask:   verify(request.get_data(), request.headers["X-Webhook-Signature"], WHSEC)
+# FastAPI: verify(await request.body(), request.headers["x-webhook-signature"], WHSEC)</code></pre>
+<pre data-p="js" hidden><code>const crypto = require("crypto");
+
+function verify(rawBody, header, secret) {
+  const parts = Object.fromEntries(header.split(",").map(p => p.split("=")));
+  if (Math.abs(Date.now() / 1000 - Number(parts.t)) > 300) return false;
+  const want = crypto.createHmac("sha256", secret)
+    .update(`${parts.t}.${rawBody}`).digest("hex");
+  return crypto.timingSafeEqual(Buffer.from(want), Buffer.from(parts.v1));
+}
+
+// Express: app.post("/hooks/screening", express.raw({ type: "application/json" }),
+//   (req, res) => verify(req.body.toString(), req.get("X-Webhook-Signature"), WHSEC) ...)</code></pre>
+
+<h3 id="retries">Retries &amp; ordering</h3>
+<ul>
+<li>Any <code>2xx</code> within 15 seconds counts as delivered. Anything else, including a timeout, is retried after 30 s, 2 min, 10 min, 30 min, 1 h, 2 h, 4 h and 8 h. After that the delivery is marked <code>failed</code> and shows in <code>GET /v1/deliveries</code>.</li>
+<li>Answer fast and do the work afterwards: store the body, return <code>200</code>, then process it.</li>
+<li>Delivery is at least once. De-duplicate on the envelope <code>id</code>.</li>
+<li>Events can arrive out of order when a retry is involved. Use <code>data.sequence</code> on <code>call.status</code> to discard stale ones, and treat <code>call.completed</code> as final whenever it arrives.</li>
+</ul>
+
+<h2 id="call-object">The call object</h2>
+<p>This is what <code>call.completed</code> carries, and what <code>GET /v1/calls/{id}</code> returns once a call has ended. While a call is open, <code>GET</code> returns the first block of fields only.</p>
+<pre><code>{
+  "id": "call_66e7c041787915e90c13",
+  "object": "call",
+  "use_case": "job-screening",
+  "mode": "live",                          // "test" for test-key calls (and "test": true)
+  "status": "ended",
+  "outcome": "answered",                   // see Outcomes
+  "external_ref": "cand-881",
+  "attempt": 1,
+  "metadata": { "crm_candidate_id": 881, "requisition": "REQ-204" },
+  "candidate": { "name": "Ravi Kumar", "phone": "+919876543210" },
+  "job": { ...exactly as you sent it... },
+  "agent": { "name": "Priya", "company_name": "Acme Talent", "voice": "saavi" },
+  "timeline": {
+    "created_at":  "2026-10-16T09:24:46.618Z",
+    "dialed_at":   "2026-10-16T09:24:47.933Z",
+    "answered_at": "2026-10-16T09:24:51.986Z",
+    "ended_at":    "2026-10-16T09:31:02.014Z"
+  },
+  "duration_s": 370.0,                     // answered → hang-up
+  "billable_minutes": 7,                   // ceil(duration_s / 60); 0 if unanswered
+  "end_reason": "completed",
+  "result": { ...see The result... },      // null when there was no conversation
+  "transcript": [
+    { "speaker": "agent", "text": "Hi Ravi, this is Priya from Acme Talent. …", "at_s": 0.0, "interrupted": false },
+    { "speaker": "candidate", "text": "Yes, go ahead.", "at_s": 5.2, "interrupted": false, "stt_confidence": 0.94 },
+    { "speaker": "agent", "text": "What's your notice period?", "at_s": 6.9, "interrupted": false,
+      "latency_s": { "e2e_latency": 1.1, "end_of_turn_delay": 0.4, "llm_node_ttft": 0.5, "tts_node_ttfb": 0.2 } }
+  ],
+  "transcript_text": "Agent: Hi Ravi, …\nCandidate: Yes, go ahead.\n…",
+  "recording": {
+    "url": "{{PUBLIC_BASE_URL}}/v1/calls/call_66e7…/recording?exp=…&amp;sig=…",
+    "expires_at": "2026-10-17T09:31:02Z",
+    "format": "mp3",
+    "channels": { "left": "candidate", "right": "agent" }
+  },                                       // null if there is no audio
+  "quality": {
+    "candidate_audio_mean_db": -31.4,
+    "candidate_audio_silent": false,       // true = the line carried no audio from their side
+    "agent_reply_latency_p50_s": 1.2,
+    "agent_turns": 18, "candidate_turns": 17, "interruptions": 2
+  },
+  "usage": {                               // raw model usage for this call
+    "llm_prompt_tokens": 41230, "llm_completion_tokens": 1630,
+    "tts_characters_count": 2210, "tts_audio_duration": 152.3, "stt_audio_duration": 365.0
+  },
+  "retention": { "delete_after": "2026-10-17T09:31:02Z" },
+  "error": null,
+  "events": [
+    { "status": "queued", "at": "…" }, { "status": "dialing", "at": "…" },
+    { "status": "ringing", "at": "…" }, { "status": "in_progress", "at": "…" },
+    { "status": "processing", "at": "…" }, { "status": "ended", "at": "…", "outcome": "answered" }
+  ]
+}</code></pre>
+
+<h2 id="result">The result</h2>
+<p>This section describes <code>job-screening</code>. For <code>language-freelancer</code>, see <a href="#use-cases">its result fields</a>. Both share <code>verdict</code>, <code>summary</code>, <code>fields</code>, <code>structured</code>, <code>risk_flags</code>, <code>custom</code> and <code>do_not_call</code>.</p>
+<pre><code>"result": {
+  "verdict": "hold",
+  "summary": "3–5 lines on fit, motivation, communication and red flags.",
+  "fields": { "notice_period": "60 days", "expected_ctc": "26 lakhs per annum", ... },
+  "structured": { "current_ctc_lpa": 18, "expected_ctc_lpa": 26, "notice_days": 60, "has_other_offers": false },
+  "risk_flags": ["expected_above_budget"],
+  "must_capture": { "relevance": "…", "budget_fit": "…", "notice_fit": "…", "location_fit": "…" },
+  "custom": { "open_to_night_shift": "Yes, once a month is fine" },
+  "do_not_call": false
+}</code></pre>
+<h3><code>verdict</code></h3>
+<p>The verdict is applied in this order, mechanically, so you can act on it without listening to the call:</p>
+<table>
+<tr><th>verdict</th><th>Rule</th></tr>
+<tr><td><code>callback_scheduled</code> / <code>not_interested</code></td><td>The call ended that way. For a callback, the time is in <code>fields.callback_time</code>.</td></tr>
+<tr><td><code>reject</code></td><td>A <b>firm</b> mismatch: irrelevant experience; expected CTC above budget and the candidate didn't accept the budget; notice above the maximum and not negotiable; location or work mode refused.</td></tr>
+<tr><td><code>hold</code></td><td>A <b>soft</b> mismatch (“negotiable”, buyout possible), any must-capture item not captured, or a competing offer.</td></tr>
+<tr><td><code>proceed</code></td><td>None of the above: relevant, within budget or accepted it, notice within the maximum, location and mode accepted, and everything captured.</td></tr>
+</table>
+<h3><code>fields</code></h3>
+<p>All values are strings, and anything not covered is exactly <code>"Not captured"</code>. Keys: <code>candidate_name</code>, <code>current_company_and_role</code>, <code>total_experience</code>, <code>key_responsibilities</code>, <code>reason_for_leaving</code>, <code>desired_next_role</code>, <code>current_ctc</code>, <code>expected_ctc</code>, <code>expected_ctc_basis</code>, <code>budget_disclosed_and_reaction</code>, <code>notice_period</code>, <code>notice_negotiable_or_buyout</code>, <code>last_working_day</code>, <code>gap_reason</code>, <code>current_location</code>, <code>open_to_location_and_mode</code>, <code>relocation_timeline</code>, <code>callback_time</code>, <code>not_interested_reason</code>, <code>asked_to_be_removed</code>, <code>open_questions</code>, <code>other_offers</code>.</p>
+<h3><code>structured</code></h3>
+<p>Numbers for writing straight into your ATS: CTC in lakhs per annum and notice in days. A value is <code>null</code> if it wasn't said. It is never guessed from a job title.</p>
+<h3><code>risk_flags</code></h3>
+<p>Zero or more of: <code>expected_above_budget</code>, <code>competing_offer</code>, <code>notice_above_max</code>, <code>location_or_mode_mismatch</code>, <code>skills_depth_unclear</code>.</p>
+<h3><code>do_not_call</code></h3>
+<p>If this is <code>true</code>, the candidate asked to be removed. We have already suppressed the number on your account. Mark them in your own system too, and stop all other outreach to them.</p>
+
+<h2 id="errors">Errors</h2>
+<p>Every error on <code>/v1</code> has the same shape:</p>
+<pre><code>{ "error": { "code": "invalid_request", "message": "job: job is missing required fields: ctc_max" } }</code></pre>
+<table>
+<tr><th>HTTP</th><th>code</th><th>Meaning</th></tr>
+<tr><td>401</td><td><code>unauthorized</code></td><td>Missing, malformed or revoked key.</td></tr>
+<tr><td>404</td><td><code>not_found</code></td><td>No such call for this key, including calls made with your other key.</td></tr>
+<tr><td>409</td><td><code>call_in_progress</code></td><td>This number already has an open call.</td></tr>
+<tr><td>409</td><td><code>do_not_call</code></td><td>The number is on your suppression list.</td></tr>
+<tr><td>409</td><td><code>already_ended</code>, <code>not_available</code>, <code>no_webhook</code></td><td>The action doesn't fit the call's (or the account's) current state.</td></tr>
+<tr><td>410</td><td><code>expired</code>, <code>deleted</code></td><td>The recording is past its retention window.</td></tr>
+<tr><td>422</td><td><code>invalid_request</code>, <code>invalid_use_case</code>, <code>invalid_phone</code>, <code>invalid_voice</code></td><td>The body failed validation. The message lists every problem.</td></tr>
+<tr><td>5xx</td><td>—</td><td>Our fault. Retry with the same <code>Idempotency-Key</code>. It's safe.</td></tr>
+</table>
+
+<h2 id="compliance">Your responsibilities</h2>
+<ul>
+<li><b>Consent and lawful basis.</b> Call only candidates who applied, or who consented to be contacted about roles, and keep that evidence in your system. You are the data fiduciary for your candidates under the DPDP Act, 2023. We process their data on your instructions and delete it as described in <a href="#data">Your data, not ours</a>.</li>
+<li><b>Recording notice.</b> Calls are recorded. Make sure your candidate-facing privacy notice says that screening calls may be recorded and handled by an AI agent.</li>
+<li><b>Do-not-call.</b> Respect <code>do_not_call: true</code> across all of your outreach, not just these calls. Push your own opt-outs to us with <code>POST /v1/suppressions</code>.</li>
+<li><b>Accuracy of the brief.</b> The agent says what the brief says. A wrong budget in the brief becomes a wrong budget on the phone.</li>
+<li><b>Decisions.</b> The verdict is a screening recommendation. A person on your side makes the hiring decision.</li>
+</ul>
+
+<p style="margin-top:56px;color:var(--muted);font-size:13px">openfury is open source (MIT). Want it hosted — phone lines, voices and uptime handled for you? Email <a href="mailto:shivam@humanbit.ai">shivam@humanbit.ai</a> and <a href="mailto:apoorv@humanbit.ai">apoorv@humanbit.ai</a>.</p>
+</main>
+</div>
+<script>
+(function(){
+  var root=document.documentElement, btn=document.getElementById("theme");
+  try{var s=localStorage.getItem("apidoc-theme");if(s)root.setAttribute("data-theme",s);}catch(e){}
+  btn.addEventListener("click",function(){
+    var dark=root.getAttribute("data-theme")==="dark"||(!root.getAttribute("data-theme")&&matchMedia("(prefers-color-scheme: dark)").matches);
+    var next=dark?"light":"dark";root.setAttribute("data-theme",next);
+    try{localStorage.setItem("apidoc-theme",next);}catch(e){}
+  });
+  document.querySelectorAll(".tabs").forEach(function(tabs){
+    tabs.addEventListener("click",function(ev){
+      var b=ev.target.closest("button");if(!b)return;
+      tabs.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-selected",x===b?"true":"false");});
+      var n=tabs.nextElementSibling;
+      while(n&&n.tagName==="PRE"){n.hidden=n.getAttribute("data-p")!==b.getAttribute("data-t");n=n.nextElementSibling;}
+    });
+  });
+})();
+</script>
+</body>
+</html>

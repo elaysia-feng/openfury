@@ -1,0 +1,130 @@
+{
+  "title": "Customer support screening",
+  "summary": "Job screening for support roles: shift acceptance as a deal-breaker, channels, volume and tools, metrics, a hard-customer example; the call doubles as a communication check.",
+  "extends": "job-screening",
+  "max_minutes": 12,
+  "wrap_up_minutes": 10,
+  "voice": "saavi",
+  "compose": true,
+  "required": [
+    "role_name",
+    "role_location",
+    "work_mode",
+    "experience_range",
+    "ctc_max",
+    "max_notice_period"
+  ],
+  "optional": [
+    "ctc_min",
+    "client_company",
+    "company_description",
+    "funding_stage",
+    "employee_size",
+    "reporting_to",
+    "role_description",
+    "additional_details",
+    "extra_context"
+  ],
+  "defaults": {
+    "ctc_min": "None.",
+    "additional_details": "None.",
+    "extra_context": "None.",
+    "client_company": ""
+  },
+  "fields": {
+    "Candidate name": "candidate_name",
+    "Current company and role": "current_company_and_role",
+    "Total experience": "total_experience",
+    "Channels (voice / chat / email)": "channels",
+    "Daily volume": "daily_volume",
+    "Tools used": "tools",
+    "Metrics they know (CSAT, AHT)": "metrics",
+    "Hard customer example": "hard_customer_example",
+    "Languages they can support in": "support_languages",
+    "Shift acceptance": "shift_acceptance",
+    "Communication on this call (Good / Basic / Poor)": "communication",
+    "Reason for leaving": "reason_for_leaving",
+    "Current CTC": "current_ctc",
+    "Expected CTC": "expected_ctc",
+    "Budget disclosed (Yes/No) and reaction": "budget_disclosed_and_reaction",
+    "Notice period": "notice_period",
+    "Negotiable / buyout": "notice_negotiable_or_buyout",
+    "Current location": "current_location",
+    "Open to role location and work mode": "open_to_location_and_mode",
+    "Callback time (if applicable)": "callback_time",
+    "Not interested reason (if applicable)": "not_interested_reason",
+    "Asked to be removed from our database (Yes/No)": "asked_to_be_removed",
+    "Open questions to answer in next call": "open_questions",
+    "Other offers or interviews in progress": "other_offers"
+  },
+  "verdicts": [
+    "proceed",
+    "hold",
+    "reject",
+    "callback_scheduled",
+    "not_interested"
+  ],
+  "demo": {
+    "role_name": "Customer Support Associate",
+    "experience_range": "1 to 3 years",
+    "role_location": "Bangalore",
+    "work_mode": "work from office",
+    "ctc_min": "3 lakhs per annum",
+    "ctc_max": "5 lakhs per annum",
+    "max_notice_period": "30 days",
+    "company_description": "Acme builds payments infrastructure for small businesses.",
+    "funding_stage": "Series A",
+    "employee_size": "around 60 people",
+    "reporting_to": "the VP of Engineering",
+    "role_description": "Chat and email support for a fintech app; rotational shifts including weekends."
+  },
+  "sample": {
+    "turns": [
+      [
+        "agent",
+        "Hi {{candidate_name}}, this is {{agent_name}} from {{company_name}}. I'm calling about a {{role_name}} role. Do you have two minutes?"
+      ],
+      [
+        "candidate",
+        "Yes."
+      ],
+      [
+        "agent",
+        "The role has rotational shifts, including some weekends — does that work for you?"
+      ],
+      [
+        "candidate",
+        "Yes, I'm doing rotational shifts right now also."
+      ]
+    ],
+    "result": {
+      "verdict": "proceed",
+      "summary": "[TEST] {{candidate_name}} handles chat and email support on Freshdesk, already works rotational shifts, communicated clearly.",
+      "fields": {
+        "shift_acceptance": "Yes, currently on rotational",
+        "channels": "Chat and email",
+        "tools": "Freshdesk",
+        "communication": "Good",
+        "asked_to_be_removed": "No"
+      },
+      "structured": {
+        "current_ctc_lpa": 3.6,
+        "expected_ctc_lpa": 4.5,
+        "notice_days": 30,
+        "has_other_offers": false,
+        "years_experience": 2,
+        "accepts_shift": true,
+        "communication": "good"
+      },
+      "risk_flags": [],
+      "must_capture": {
+        "relevance": "Relevant",
+        "shift_fit": "Accepted",
+        "communication": "Good",
+        "budget_fit": "Within",
+        "notice_fit": "Within max",
+        "location_fit": "Accepted"
+      }
+    }
+  }
+}
