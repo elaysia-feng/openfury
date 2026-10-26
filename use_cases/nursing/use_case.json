@@ -1,0 +1,146 @@
+{
+  "title": "Nursing role screening",
+  "summary": "Job screening for nursing roles: registration status and jurisdiction, specialty and care setting, relevant experience, shift fit, notice, and compensation.",
+  "extends": "job-screening",
+  "max_minutes": 12,
+  "wrap_up_minutes": 10,
+  "voice": "saavi",
+  "compose": true,
+  "required": [
+    "role_name",
+    "role_location",
+    "work_mode",
+    "experience_range",
+    "ctc_max",
+    "max_notice_period"
+  ],
+  "optional": [
+    "ctc_min",
+    "client_company",
+    "company_description",
+    "funding_stage",
+    "employee_size",
+    "reporting_to",
+    "role_description",
+    "additional_details",
+    "extra_context"
+  ],
+  "defaults": {
+    "ctc_min": "None.",
+    "additional_details": "None.",
+    "extra_context": "None.",
+    "client_company": ""
+  },
+  "fields": {
+    "Candidate name": "candidate_name",
+    "Current company and role": "current_company_and_role",
+    "Total nursing experience": "total_experience",
+    "Registration / licence status": "licence_valid",
+    "Registration jurisdiction": "registration_jurisdiction",
+    "Nursing specialty and setting": "specialty",
+    "Experience in that specialty": "specialty_experience",
+    "Patient group and responsibilities (no patient details)": "clinical_scope",
+    "Shift and night-duty availability": "accepts_night_shift",
+    "Reason for leaving": "reason_for_leaving",
+    "Desired next role": "desired_next_role",
+    "Current CTC": "current_ctc",
+    "Expected CTC": "expected_ctc",
+    "Budget disclosed (Yes/No) and reaction": "budget_disclosed_and_reaction",
+    "Notice period": "notice_period",
+    "Negotiable / buyout": "notice_negotiable_or_buyout",
+    "Last working day (if applicable)": "last_working_day",
+    "Current location": "current_location",
+    "Open to role location and work mode": "open_to_location_and_mode",
+    "Relocation timeline (if applicable)": "relocation_timeline",
+    "Callback time (if applicable)": "callback_time",
+    "Not interested reason (if applicable)": "not_interested_reason",
+    "Asked to be removed from our database (Yes/No)": "asked_to_be_removed",
+    "Open questions to answer in next call": "open_questions",
+    "Other offers or interviews in progress": "other_offers"
+  },
+  "verdicts": [
+    "proceed",
+    "hold",
+    "reject",
+    "callback_scheduled",
+    "not_interested"
+  ],
+  "demo": {
+    "role_name": "Registered Nurse — Emergency Department",
+    "experience_range": "3 to 7 years",
+    "role_location": "Bangalore",
+    "work_mode": "hybrid",
+    "ctc_min": "5 lakhs per annum",
+    "ctc_max": "8 lakhs per annum",
+    "max_notice_period": "60 days",
+    "company_description": "Sample Hospital provides emergency and inpatient care.",
+    "employee_size": "around 200 people",
+    "reporting_to": "the nursing supervisor",
+    "role_description": "Adult emergency nursing. Active registration with the relevant state council is required by the start date. Rotating shifts include nights and weekends."
+  },
+  "sample": {
+    "turns": [
+      [
+        "agent",
+        "Hi Nisha, this is Meera from Acme. I'm calling about a Registered Nurse role in Bangalore. Do you have two minutes?"
+      ],
+      [
+        "candidate",
+        "Yes, I can talk now."
+      ],
+      [
+        "agent",
+        "Is your nursing registration active in the state where this role is based? You don't need to share a registration number."
+      ],
+      [
+        "candidate",
+        "Yes, it's active with the Karnataka State Nursing Council."
+      ],
+      [
+        "agent",
+        "What setting have you worked in, and what shifts are you comfortable with?"
+      ],
+      [
+        "candidate",
+        "I've worked five years in nursing, including two years in adult emergency triage. I'm comfortable with rotating nights and weekends. I won't share any patient details."
+      ]
+    ],
+    "result": {
+      "verdict": "proceed",
+      "summary": "[TEST] Nisha has five years of nursing experience, including two years in adult emergency triage. Active registration and rotating shift availability were confirmed without collecting a registration number or patient information. Compensation, notice, and Bangalore work-mode fit are within the role brief.",
+      "fields": {
+        "total_experience": "5 years",
+        "licence_valid": "Active",
+        "registration_jurisdiction": "Karnataka State Nursing Council",
+        "specialty": "Adult emergency triage and medical-surgical nursing",
+        "specialty_experience": "2 years in adult emergency triage",
+        "clinical_scope": "Adult triage and inpatient care; no patient details collected",
+        "accepts_night_shift": "Yes, rotating nights and weekends",
+        "current_ctc": "6 lakhs per annum",
+        "expected_ctc": "7 lakhs per annum",
+        "notice_period": "30 days",
+        "asked_to_be_removed": "No"
+      },
+      "structured": {
+        "current_ctc_lpa": 6,
+        "expected_ctc_lpa": 7,
+        "notice_days": 30,
+        "has_other_offers": false,
+        "years_experience": 5,
+        "specialty_experience_years": 2,
+        "licence_valid": true,
+        "accepts_night_shift": true
+      },
+      "risk_flags": [],
+      "must_capture": {
+        "relevance": "Relevant nursing experience",
+        "registration": "Active; jurisdiction confirmed",
+        "specialty_fit": "Adult emergency experience confirmed",
+        "shift_fit": "Rotating nights and weekends accepted",
+        "budget_fit": "Within",
+        "notice_fit": "Within max",
+        "location_fit": "Accepted"
+      }
+    }
+  }
+}

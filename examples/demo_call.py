@@ -67,6 +67,12 @@ recent tough customer: a refund that failed twice; you escalated to payments and
 customer back yourself the next day. Already on rotational shifts, weekends are fine but you
 would prefer not to do night shifts permanently — say so if asked. Current CTC 3.6 lakhs,
 expecting 4.5. Notice 30 days. You speak Hindi, English and some Marathi.""",
+    "nursing": """Nisha, 5 years as a registered nurse at Sample Hospital in Bangalore. Your registration with
+the Karnataka State Nursing Council is active; do not share a registration number or any
+patient details. You have 2 years in adult emergency triage and 3 years on a medical-surgical
+ward. You are comfortable with rotating night and weekend shifts. Current CTC is 6 lakhs,
+expected is 7 lakhs, notice is 30 days, and you are open to a hybrid role in Bangalore. No
+other offers.""",
     "language-freelancer": """Ravi, a final-year B.Com student in Hubli. You have a laptop (an old Lenovo). You speak
 Kannada and Hindi at home and can read and write Kannada well; your English is okay. You
 could give three to four hours a day, more on weekends. You don't earn anything right now

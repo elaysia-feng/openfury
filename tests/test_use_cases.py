@@ -5,7 +5,7 @@ import pytest
 
 from openfury.use_cases import all_use_cases, normalize_phone, render
 
-SLUGS = ["engineering", "job-screening", "language-freelancer", "sales", "support"]
+SLUGS = ["engineering", "job-screening", "language-freelancer", "nursing", "sales", "support"]
 
 
 def test_every_slug_loads():
